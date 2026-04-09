@@ -20,7 +20,14 @@ async def ping_target(
     ts = time.time()
     if use_icmp:
         return await _icmp_ping(target, count, timeout, ts)
-    return await _tcp_ping(target, 80, count, timeout, ts)
+    # TCP fallback: try 443 (widely accessible), then 80.
+    # Port 53 is intentionally excluded — transparent DNS proxies make it
+    # appear reachable even for unroutable addresses.
+    for port in (443, 80):
+        result = await _tcp_ping(target, port, count, timeout, ts)
+        if result["packets_recv"] > 0:
+            return result
+    return result  # all ports failed, return last result
 
 
 async def _icmp_ping(target: str, count: int, timeout: int, ts: float) -> dict[str, Any]:
