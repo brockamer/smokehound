@@ -148,9 +148,9 @@ Run `smokehound reset` to wipe and start fresh. SmokеHound uses SQLite WAL mode
 
 ## Sample Report
 
-![SmokеHound report showing packet loss spikes and WiFi signal drops](docs/sample-report.png)
+**[View live sample report →](https://htmlpreview.github.io/?https://github.com/brockamer/smokehound/blob/main/docs/sample-report.html)**
 
-*(Screenshot placeholder — run `smokehound report` after a few hours of collection to see your own.)*
+The sample shows 4 hours of simulated data including two outages, a degradation period with high jitter and packet loss, WiFi RSSI drops, and a traceroute path change. All charts are interactive — zoom, pan, and hover for details.
 
 ## Development
 
