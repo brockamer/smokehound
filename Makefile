@@ -6,6 +6,8 @@ VENV := .venv
 BIN := $(VENV)/bin
 
 install:
+	@$(PYTHON) -m venv --help >/dev/null 2>&1 || \
+		(echo "ERROR: python3-venv not found. Run: sudo apt install python3-venv" && exit 1)
 	$(PYTHON) -m venv $(VENV)
 	$(BIN)/pip install --upgrade pip
 	$(BIN)/pip install -e ".[speedtest]"
@@ -14,6 +16,8 @@ install:
 	@echo "Then: smokehound doctor"
 
 dev:
+	@$(PYTHON) -m venv --help >/dev/null 2>&1 || \
+		(echo "ERROR: python3-venv not found. Run: sudo apt install python3-venv" && exit 1)
 	$(PYTHON) -m venv $(VENV)
 	$(BIN)/pip install --upgrade pip
 	$(BIN)/pip install -e ".[dev,speedtest]"

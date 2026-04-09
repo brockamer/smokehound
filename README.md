@@ -134,6 +134,13 @@ On macOS, the `airport` utility is required. It's bundled with macOS but the pat
 
 On Linux, install `iw` or `iwconfig` (`sudo apt install iw wireless-tools`).
 
+**`make install` fails with "ensurepip is not available"** (Debian/Ubuntu/Pop!_OS)
+
+```bash
+sudo apt install python3-venv
+make install
+```
+
 **Speed test is very slow**
 
 The Cloudflare speed test downloads 10 MB. If your connection is slow, increase `[speedtest] interval_minutes` or set `enabled = false`.
