@@ -271,7 +271,6 @@ const LAYOUT_BASE = {{
   yaxis: {{ gridcolor: '#21262d', zerolinecolor: '#30363d' }},
   legend: {{ bgcolor: 'rgba(22,27,34,0.8)', bordercolor: '#30363d', borderwidth: 1 }},
   hovermode: 'x unified',
-  autosize: true,
 }};
 const CONFIG = {{ responsive: true, displayModeBar: true, modeBarButtonsToRemove: ['lasso2d','select2d'] }};
 
