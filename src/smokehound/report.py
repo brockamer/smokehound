@@ -240,7 +240,7 @@ def _render_html(data: dict, since: float, until: float) -> str:
     </div>
     <div class="card">
       <div class="card-label">DNS Success</div>
-      <div class="card-value {'good' if s.get('dns_success_pct', 0) >= 99 else 'warn'}">{dns_ok}</div>
+      <div class="card-value {'good' if (s.get('dns_success_pct') or 0) >= 99 else 'warn'}">{dns_ok}</div>
     </div>
   </div>
 
@@ -269,11 +269,13 @@ const LAYOUT_BASE = {{
   paper_bgcolor: '#161b22',
   plot_bgcolor: '#0d1117',
   font: {{ color: '#e6edf3', size: 12 }},
-  margin: {{ l: 50, r: 20, t: 40, b: 40 }},
+  height: 360,
+  margin: {{ l: 60, r: 20, t: 44, b: 50 }},
   xaxis: {{ gridcolor: '#21262d', zerolinecolor: '#30363d' }},
   yaxis: {{ gridcolor: '#21262d', zerolinecolor: '#30363d' }},
   legend: {{ bgcolor: 'rgba(22,27,34,0.8)', bordercolor: '#30363d', borderwidth: 1 }},
   hovermode: 'x unified',
+  autosize: true,
 }};
 const CONFIG = {{ responsive: true, displayModeBar: true, modeBarButtonsToRemove: ['lasso2d','select2d'] }};
 
@@ -305,8 +307,8 @@ function ts(t) {{ return new Date(t * 1000).toISOString(); }}
     title: {{ text: 'Network Status Timeline', font: {{ size: 14 }} }},
     shapes,
     yaxis: {{ ...LAYOUT_BASE.yaxis, showticklabels: false, range: [0, 1.1] }},
-    height: 100,
-    margin: {{ l: 50, r: 20, t: 40, b: 30 }},
+    height: 120,
+    margin: {{ l: 60, r: 20, t: 44, b: 30 }},
   }}, CONFIG);
 }})();
 
