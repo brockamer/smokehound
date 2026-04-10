@@ -43,8 +43,15 @@ round-trip min/avg/max/stddev = 15.000/18.500/22.000/3.500 ms
 
 
 def test_parse_macos_ping():
-    result = {"packets_sent": 5, "packets_recv": 0, "loss_pct": 100.0,
-               "rtt_min_ms": None, "rtt_avg_ms": None, "rtt_max_ms": None, "jitter_ms": None}
+    result = {
+        "packets_sent": 5,
+        "packets_recv": 0,
+        "loss_pct": 100.0,
+        "rtt_min_ms": None,
+        "rtt_avg_ms": None,
+        "rtt_max_ms": None,
+        "jitter_ms": None,
+    }
     _parse_ping_output(MACOS_PING_OUTPUT, result, 5)
     assert result["loss_pct"] == 0.0
     assert result["rtt_min_ms"] == pytest.approx(10.987)
@@ -54,8 +61,15 @@ def test_parse_macos_ping():
 
 
 def test_parse_linux_ping():
-    result = {"packets_sent": 3, "packets_recv": 0, "loss_pct": 100.0,
-               "rtt_min_ms": None, "rtt_avg_ms": None, "rtt_max_ms": None, "jitter_ms": None}
+    result = {
+        "packets_sent": 3,
+        "packets_recv": 0,
+        "loss_pct": 100.0,
+        "rtt_min_ms": None,
+        "rtt_avg_ms": None,
+        "rtt_max_ms": None,
+        "jitter_ms": None,
+    }
     _parse_ping_output(LINUX_PING_OUTPUT, result, 3)
     assert result["loss_pct"] == 0.0
     assert result["rtt_min_ms"] == pytest.approx(10.900)
@@ -63,8 +77,15 @@ def test_parse_linux_ping():
 
 
 def test_parse_ping_with_loss():
-    result = {"packets_sent": 5, "packets_recv": 0, "loss_pct": 100.0,
-               "rtt_min_ms": None, "rtt_avg_ms": None, "rtt_max_ms": None, "jitter_ms": None}
+    result = {
+        "packets_sent": 5,
+        "packets_recv": 0,
+        "loss_pct": 100.0,
+        "rtt_min_ms": None,
+        "rtt_avg_ms": None,
+        "rtt_max_ms": None,
+        "jitter_ms": None,
+    }
     _parse_ping_output(LOSS_PING_OUTPUT, result, 5)
     assert result["loss_pct"] == 60.0
     assert result["rtt_avg_ms"] == pytest.approx(18.5)
@@ -73,6 +94,7 @@ def test_parse_ping_with_loss():
 # ---------------------------------------------------------------------------
 # DNS
 # ---------------------------------------------------------------------------
+
 
 def test_build_dns_query_returns_bytes():
     q = _build_dns_query("google.com")
@@ -86,6 +108,7 @@ def test_dns_query_structure():
     # Header is 12 bytes
     # Verify it's a valid query (flags indicate QR=0, recursion desired)
     import struct
+
     txid, flags, qdcount = struct.unpack(">HHH", q[:6])
     assert qdcount == 1
     assert flags & 0x0100  # RD bit set
@@ -107,6 +130,7 @@ async def test_resolve_system_dns():
 # HTTP
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_http_probe_structure():
     """HTTP probe returns all expected fields."""
@@ -124,6 +148,7 @@ async def test_http_probe_structure():
 # Gateway
 # ---------------------------------------------------------------------------
 
+
 def test_gateway_detection_returns_string_or_none():
     from smokehound.collectors.gateway import detect_gateway
 
@@ -131,12 +156,14 @@ def test_gateway_detection_returns_string_or_none():
     # Should be None or a string that looks like an IP
     if gw is not None:
         import re
+
         assert re.match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", gw)
 
 
 # ---------------------------------------------------------------------------
 # Traceroute parsing
 # ---------------------------------------------------------------------------
+
 
 def test_parse_traceroute_output():
     from smokehound.collectors.traceroute import _parse_traceroute

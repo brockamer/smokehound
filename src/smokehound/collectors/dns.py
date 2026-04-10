@@ -75,9 +75,7 @@ async def _resolve_custom(
     t0 = time.perf_counter()
 
     try:
-        response = await asyncio.wait_for(
-            _udp_dns_query(resolver_ip, 53, query), timeout=timeout
-        )
+        response = await asyncio.wait_for(_udp_dns_query(resolver_ip, 53, query), timeout=timeout)
         result["resolve_ms"] = (time.perf_counter() - t0) * 1000
         ip = _parse_dns_response(response)
         if ip:
@@ -135,9 +133,7 @@ async def _udp_dns_query(host: str, port: int, query: bytes) -> bytes:
             if not self.future.done():
                 self.future.set_exception(exc or ConnectionError("connection lost"))
 
-    transport, protocol = await loop.create_datagram_endpoint(
-        DNSProtocol, remote_addr=(host, port)
-    )
+    transport, protocol = await loop.create_datagram_endpoint(DNSProtocol, remote_addr=(host, port))
     try:
         transport.sendto(query)
         return await protocol.future
@@ -203,8 +199,6 @@ async def collect_dns_round(
 ) -> list[dict[str, Any]]:
     """Run all domain/resolver combinations concurrently."""
     tasks = [
-        resolve_domain(domain, resolver, timeout)
-        for domain in domains
-        for resolver in resolvers
+        resolve_domain(domain, resolver, timeout) for domain in domains for resolver in resolvers
     ]
     return list(await asyncio.gather(*tasks))

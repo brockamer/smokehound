@@ -50,9 +50,7 @@ def _gateway_linux() -> str | None:
                 if len(parts) >= 3 and parts[1] == "00000000":
                     # Gateway in hex, little-endian
                     gw_hex = parts[2]
-                    gw = ".".join(
-                        str(int(gw_hex[i : i + 2], 16)) for i in (6, 4, 2, 0)
-                    )
+                    gw = ".".join(str(int(gw_hex[i : i + 2], 16)) for i in (6, 4, 2, 0))
                     return gw
     except Exception:
         pass
@@ -82,13 +80,16 @@ async def collect_wifi() -> dict[str, Any]:
 
 
 async def _wifi_macos(result: dict[str, Any]) -> None:
-    airport = "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
+    airport = (
+        "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
+    )
     if not shutil.which(airport) and not __import__("os").path.exists(airport):
         result["error"] = "airport utility not found"
         return
     try:
         proc = await asyncio.create_subprocess_exec(
-            airport, "-I",
+            airport,
+            "-I",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -126,7 +127,8 @@ async def _wifi_linux(result: dict[str, Any]) -> None:
     if iw:
         try:
             proc = await asyncio.create_subprocess_exec(
-                iw, "dev",
+                iw,
+                "dev",
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
@@ -141,7 +143,10 @@ async def _wifi_linux(result: dict[str, Any]) -> None:
                     break
             if iface:
                 proc2 = await asyncio.create_subprocess_exec(
-                    iw, "dev", iface, "link",
+                    iw,
+                    "dev",
+                    iface,
+                    "link",
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                 )

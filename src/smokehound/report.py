@@ -19,9 +19,9 @@ def _fmt_duration(seconds: float) -> str:
     if seconds < 60:
         return f"{seconds:.0f}s"
     elif seconds < 3600:
-        return f"{seconds/60:.1f}m"
+        return f"{seconds / 60:.1f}m"
     else:
-        return f"{seconds/3600:.1f}h"
+        return f"{seconds / 3600:.1f}h"
 
 
 def generate_report(
@@ -102,9 +102,7 @@ def _collect_data(db: Database, where: str, since: float, until: float) -> dict[
     data["traceroute"] = [dict(r) for r in rows]
 
     # System events
-    rows = db.fetchall(
-        f"SELECT ts, kind, detail FROM system_events WHERE {where} ORDER BY ts"
-    )
+    rows = db.fetchall(f"SELECT ts, kind, detail FROM system_events WHERE {where} ORDER BY ts")
     data["events"] = [dict(r) for r in rows]
 
     # Summary stats
@@ -118,9 +116,7 @@ def _compute_summary(data: dict, since: float, until: float) -> dict:
     span = until - since
 
     # Uptime: time not in outage
-    outage_total = sum(
-        o.get("duration_s") or 0 for o in data["outages"] if o.get("duration_s")
-    )
+    outage_total = sum(o.get("duration_s") or 0 for o in data["outages"] if o.get("duration_s"))
     summary["uptime_pct"] = max(0.0, (1 - outage_total / max(span, 1)) * 100)
     summary["total_outages"] = len(data["outages"])
     summary["outage_total_s"] = outage_total
@@ -172,7 +168,7 @@ def _render_html(data: dict, since: float, until: float) -> str:
         started = _ts_to_dt(o["started_at"])
         ended = _ts_to_dt(o["ended_at"]) if o.get("ended_at") else "ongoing"
         loss = f"{o.get('max_loss_pct', 0):.0f}%"
-        outage_rows += f"<tr><td>{started}</td><td>{ended}</td><td>{dur}</td><td>{loss}</td><td>{o.get('trigger','')}</td></tr>\n"
+        outage_rows += f"<tr><td>{started}</td><td>{ended}</td><td>{dur}</td><td>{loss}</td><td>{o.get('trigger', '')}</td></tr>\n"
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -220,7 +216,7 @@ def _render_html(data: dict, since: float, until: float) -> str:
   <div class="summary-cards">
     <div class="card">
       <div class="card-label">Uptime</div>
-      <div class="card-value {'good' if s.get('uptime_pct', 0) >= 99 else 'warn' if s.get('uptime_pct', 0) >= 95 else 'bad'}">{uptime_pct}</div>
+      <div class="card-value {"good" if s.get("uptime_pct", 0) >= 99 else "warn" if s.get("uptime_pct", 0) >= 95 else "bad"}">{uptime_pct}</div>
     </div>
     <div class="card">
       <div class="card-label">Avg Latency</div>
@@ -232,7 +228,7 @@ def _render_html(data: dict, since: float, until: float) -> str:
     </div>
     <div class="card">
       <div class="card-label">Total Outages</div>
-      <div class="card-value {'bad' if total_outages > 0 else 'good'}">{total_outages}</div>
+      <div class="card-value {"bad" if total_outages > 0 else "good"}">{total_outages}</div>
     </div>
     <div class="card">
       <div class="card-label">Avg Download</div>
@@ -240,7 +236,7 @@ def _render_html(data: dict, since: float, until: float) -> str:
     </div>
     <div class="card">
       <div class="card-label">DNS Success</div>
-      <div class="card-value {'good' if (s.get('dns_success_pct') or 0) >= 99 else 'warn'}">{dns_ok}</div>
+      <div class="card-value {"good" if (s.get("dns_success_pct") or 0) >= 99 else "warn"}">{dns_ok}</div>
     </div>
   </div>
 
@@ -255,7 +251,7 @@ def _render_html(data: dict, since: float, until: float) -> str:
 
   <h2>Outage Log</h2>
   <div class="chart-wrap">
-  {'<p style="color:var(--green);padding:8px">No outages detected in this period.</p>' if not data["outages"] else f'<table><thead><tr><th>Started</th><th>Ended</th><th>Duration</th><th>Max Loss</th><th>Trigger</th></tr></thead><tbody>{outage_rows}</tbody></table>'}
+  {'<p style="color:var(--green);padding:8px">No outages detected in this period.</p>' if not data["outages"] else f"<table><thead><tr><th>Started</th><th>Ended</th><th>Duration</th><th>Max Loss</th><th>Trigger</th></tr></thead><tbody>{outage_rows}</tbody></table>"}
   </div>
 
   <footer>

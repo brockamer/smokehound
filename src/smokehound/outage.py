@@ -13,6 +13,7 @@ from .db import Database
 @dataclass
 class OutageState:
     """Track rolling outage detection state."""
+
     config: OutageConfig
     db: Database
     run_id: int
@@ -41,9 +42,7 @@ class OutageState:
             # Potential outage start — open tentatively
             self._in_outage = True
             self._outage_start = now
-            self._outage_id = self.db.open_outage(
-                self.run_id, now, f"loss={avg_loss:.0f}%"
-            )
+            self._outage_id = self.db.open_outage(self.run_id, now, f"loss={avg_loss:.0f}%")
             self._max_loss_pct = avg_loss
             changed = True
 
@@ -62,9 +61,7 @@ class OutageState:
                 self.db.close_outage(self._outage_id, now, self._max_loss_pct)
             elif self._outage_id:
                 # Was a blip, delete tentative record (treat as noise)
-                self.db.execute(
-                    "DELETE FROM outage_events WHERE id = ?", (self._outage_id,)
-                )
+                self.db.execute("DELETE FROM outage_events WHERE id = ?", (self._outage_id,))
             self._in_outage = False
             self._outage_id = None
             self._outage_start = 0.0

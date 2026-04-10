@@ -134,11 +134,20 @@ class Engine:
         ]
         ping_results = list(await asyncio.gather(*ping_tasks, return_exceptions=True))
         ping_results = [
-            r if isinstance(r, dict) else {"ts": ts, "target": "?", "loss_pct": 100.0,
-                                            "packets_sent": 0, "packets_recv": 0,
-                                            "rtt_min_ms": None, "rtt_avg_ms": None,
-                                            "rtt_max_ms": None, "jitter_ms": None,
-                                            "error": str(r)}
+            r
+            if isinstance(r, dict)
+            else {
+                "ts": ts,
+                "target": "?",
+                "loss_pct": 100.0,
+                "packets_sent": 0,
+                "packets_recv": 0,
+                "rtt_min_ms": None,
+                "rtt_avg_ms": None,
+                "rtt_max_ms": None,
+                "jitter_ms": None,
+                "error": str(r),
+            }
             for r in ping_results
         ]
         for r in ping_results:
@@ -183,8 +192,9 @@ class Engine:
             if last_hash and tr.get("path_hash") and tr["path_hash"] != last_hash:
                 tr["changed"] = 1
                 logger.info("Traceroute path changed!")
-                self.db.log_event(self.run_id, "traceroute_change",
-                                  f"old={last_hash} new={tr['path_hash']}")
+                self.db.log_event(
+                    self.run_id, "traceroute_change", f"old={last_hash} new={tr['path_hash']}"
+                )
             self.db.insert_traceroute(self.run_id, tr)
             self._notify("traceroute", tr)
 

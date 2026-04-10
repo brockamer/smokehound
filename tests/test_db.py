@@ -17,16 +17,18 @@ def db(tmp_path):
 
 def test_schema_creation(db):
     """All expected tables are created."""
-    tables = {
-        row[0]
-        for row in db.fetchall(
-            "SELECT name FROM sqlite_master WHERE type='table'"
-        )
-    }
+    tables = {row[0] for row in db.fetchall("SELECT name FROM sqlite_master WHERE type='table'")}
     expected = {
-        "metadata", "runs", "ping_results", "dns_results", "http_results",
-        "traceroute_results", "wifi_results", "speedtest_results",
-        "outage_events", "system_events",
+        "metadata",
+        "runs",
+        "ping_results",
+        "dns_results",
+        "http_results",
+        "traceroute_results",
+        "wifi_results",
+        "speedtest_results",
+        "outage_events",
+        "system_events",
     }
     assert expected.issubset(tables)
 

@@ -41,7 +41,9 @@ async def _try_speedtest_cli(result: dict[str, Any], timeout: int) -> bool:
 
     try:
         proc = await asyncio.create_subprocess_exec(
-            "speedtest-cli", "--simple", "--secure",
+            "speedtest-cli",
+            "--simple",
+            "--secure",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -147,7 +149,9 @@ async def _cloudflare_speedtest(result: dict[str, Any], timeout: int) -> None:
         addr = infos[0][4]
         ctx = ssl.create_default_context()
         _, writer = await asyncio.wait_for(
-            asyncio.open_connection(addr[0], addr[1], ssl=ctx, server_hostname="speed.cloudflare.com"),
+            asyncio.open_connection(
+                addr[0], addr[1], ssl=ctx, server_hostname="speed.cloudflare.com"
+            ),
             timeout=5,
         )
         import contextlib

@@ -21,42 +21,51 @@ def populated_db(tmp_path):
     now = time.time()
     # Insert 5 ping measurements
     for i in range(5):
-        db.insert_ping(run_id, {
-            "ts": now - (5 - i) * 30,
-            "target": "8.8.8.8",
-            "rtt_min_ms": 10.0 + i,
-            "rtt_avg_ms": 12.0 + i,
-            "rtt_max_ms": 15.0 + i,
-            "jitter_ms": 1.5,
-            "loss_pct": 0.0,
-            "packets_sent": 5,
-            "packets_recv": 5,
-            "error": None,
-        })
+        db.insert_ping(
+            run_id,
+            {
+                "ts": now - (5 - i) * 30,
+                "target": "8.8.8.8",
+                "rtt_min_ms": 10.0 + i,
+                "rtt_avg_ms": 12.0 + i,
+                "rtt_max_ms": 15.0 + i,
+                "jitter_ms": 1.5,
+                "loss_pct": 0.0,
+                "packets_sent": 5,
+                "packets_recv": 5,
+                "error": None,
+            },
+        )
 
     # Insert DNS results
-    db.insert_dns(run_id, {
-        "ts": now - 60,
-        "domain": "google.com",
-        "resolver": "system",
-        "resolve_ms": 20.0,
-        "status": "ok",
-        "resolved_ip": "142.250.80.46",
-        "error": None,
-    })
+    db.insert_dns(
+        run_id,
+        {
+            "ts": now - 60,
+            "domain": "google.com",
+            "resolver": "system",
+            "resolve_ms": 20.0,
+            "status": "ok",
+            "resolved_ip": "142.250.80.46",
+            "error": None,
+        },
+    )
 
     # Insert HTTP result
-    db.insert_http(run_id, {
-        "ts": now - 60,
-        "target": "https://www.google.com/generate_204",
-        "status_code": 204,
-        "dns_ms": 5.0,
-        "connect_ms": 10.0,
-        "tls_ms": 15.0,
-        "ttfb_ms": 20.0,
-        "total_ms": 50.0,
-        "error": None,
-    })
+    db.insert_http(
+        run_id,
+        {
+            "ts": now - 60,
+            "target": "https://www.google.com/generate_204",
+            "status_code": 204,
+            "dns_ms": 5.0,
+            "connect_ms": 10.0,
+            "tls_ms": 15.0,
+            "ttfb_ms": 20.0,
+            "total_ms": 50.0,
+            "error": None,
+        },
+    )
 
     # One outage event
     outage_id = db.open_outage(run_id, now - 200, "loss=100%")

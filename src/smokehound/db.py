@@ -305,9 +305,7 @@ class Database:
         return cur.lastrowid  # type: ignore[return-value]
 
     def close_outage(self, outage_id: int, ts: float, max_loss_pct: float) -> None:
-        row = self.fetchone(
-            "SELECT started_at FROM outage_events WHERE id = ?", (outage_id,)
-        )
+        row = self.fetchone("SELECT started_at FROM outage_events WHERE id = ?", (outage_id,))
         duration = ts - row["started_at"] if row else 0
         self.conn.execute(
             "UPDATE outage_events SET ended_at=?, duration_s=?, max_loss_pct=? WHERE id=?",
@@ -329,7 +327,9 @@ class Database:
     def get_stats(self, since: float | None = None) -> dict[str, Any]:
         """Return summary statistics for the status command."""
         where = f"WHERE ts >= {since}" if since else ""
-        row = self.fetchone(f"SELECT COUNT(*) as n, MIN(ts) as first, MAX(ts) as last FROM ping_results {where}")
+        row = self.fetchone(
+            f"SELECT COUNT(*) as n, MIN(ts) as first, MAX(ts) as last FROM ping_results {where}"
+        )
         ping_count = row["n"] if row else 0
 
         db_size = self.path.stat().st_size if self.path.exists() else 0

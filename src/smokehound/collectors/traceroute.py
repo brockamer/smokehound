@@ -59,9 +59,7 @@ async def _do_traceroute(target: str, max_hops: int) -> list[dict] | None:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
-        stdout, stderr = await asyncio.wait_for(
-            proc.communicate(), timeout=max_hops * 3 + 10
-        )
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=max_hops * 3 + 10)
         text = stdout.decode(errors="replace")
         return _parse_traceroute(text)
     except asyncio.TimeoutError:
@@ -84,7 +82,7 @@ def _parse_traceroute(text: str) -> list[dict]:
         if not m:
             continue
         hop_num = int(m.group(1))
-        remainder = line[m.end():]
+        remainder = line[m.end() :]
 
         # Check for * * * (no response)
         if re.match(r"^[\*\s]+$", remainder):
@@ -98,11 +96,13 @@ def _parse_traceroute(text: str) -> list[dict]:
         # Extract RTTs
         rtts = [float(x) for x in re.findall(r"([\d.]+)\s*ms", remainder)]
 
-        hops.append({
-            "hop": hop_num,
-            "ip": ip,
-            "rtts_ms": rtts,
-            "avg_ms": sum(rtts) / len(rtts) if rtts else None,
-        })
+        hops.append(
+            {
+                "hop": hop_num,
+                "ip": ip,
+                "rtts_ms": rtts,
+                "avg_ms": sum(rtts) / len(rtts) if rtts else None,
+            }
+        )
 
     return hops

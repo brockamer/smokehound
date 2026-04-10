@@ -1,7 +1,5 @@
 """Tests for config loading."""
 
-
-
 from smokehound.config import (
     DEFAULT_CONFIG,
     load_config,
@@ -22,9 +20,7 @@ def test_load_config_defaults(tmp_path):
 def test_load_config_override(tmp_path):
     """User config overrides defaults."""
     config_file = tmp_path / "config.toml"
-    config_file.write_text(
-        "[general]\ninterval_seconds = 60\n\n[ping]\ncount = 10\n"
-    )
+    config_file.write_text("[general]\ninterval_seconds = 60\n\n[ping]\ncount = 10\n")
     cfg = load_config(config_file)
     assert cfg.general.interval_seconds == 60
     assert cfg.ping.count == 10

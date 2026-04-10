@@ -44,11 +44,14 @@ def main() -> None:
 # start
 # ---------------------------------------------------------------------------
 
+
 @main.command()
 @click.option("-d", "--daemon", is_flag=True, help="Run as background daemon.")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging.")
 @click.option(
-    "-c", "--config", "config_path",
+    "-c",
+    "--config",
+    "config_path",
     type=click.Path(path_type=Path),
     default=None,
     help="Path to config file.",
@@ -148,10 +151,14 @@ def _start_daemon(cfg) -> None:
 # stop
 # ---------------------------------------------------------------------------
 
+
 @main.command()
 @click.option(
-    "-c", "--config", "config_path",
-    type=click.Path(path_type=Path), default=None,
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(path_type=Path),
+    default=None,
 )
 def stop(config_path: Path | None) -> None:
     """Stop a running background daemon."""
@@ -176,10 +183,14 @@ def stop(config_path: Path | None) -> None:
 # status
 # ---------------------------------------------------------------------------
 
+
 @main.command()
 @click.option(
-    "-c", "--config", "config_path",
-    type=click.Path(path_type=Path), default=None,
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(path_type=Path),
+    default=None,
 )
 def status(config_path: Path | None) -> None:
     """Show current status, uptime, and measurement counts."""
@@ -236,6 +247,7 @@ def status(config_path: Path | None) -> None:
 # report
 # ---------------------------------------------------------------------------
 
+
 @main.command()
 @click.option("--last", "last_window", default=None, help="Window like '4h', '24h', '7d'.")
 @click.option("--from", "from_dt", default=None, help="Start datetime (YYYY-MM-DD HH:MM).")
@@ -243,8 +255,11 @@ def status(config_path: Path | None) -> None:
 @click.option("-o", "--output", "output_path", type=click.Path(path_type=Path), default=None)
 @click.option("--no-open", is_flag=True, help="Don't open the report in browser.")
 @click.option(
-    "-c", "--config", "config_path",
-    type=click.Path(path_type=Path), default=None,
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(path_type=Path),
+    default=None,
 )
 def report(
     last_window: str | None,
@@ -297,6 +312,7 @@ def report(
 
 def _parse_window(window: str) -> float:
     from .utils import parse_window
+
     return parse_window(window)
 
 
@@ -304,10 +320,14 @@ def _parse_window(window: str) -> float:
 # tail
 # ---------------------------------------------------------------------------
 
+
 @main.command()
 @click.option(
-    "-c", "--config", "config_path",
-    type=click.Path(path_type=Path), default=None,
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(path_type=Path),
+    default=None,
 )
 def tail(config_path: Path | None) -> None:
     """Live tail of measurements (reads from DB, refreshes every 5s)."""
@@ -362,16 +382,18 @@ def tail(config_path: Path | None) -> None:
 # export
 # ---------------------------------------------------------------------------
 
+
 @main.command()
 @click.option("--last", "last_window", default="24h", show_default=True)
 @click.option("-o", "--output", "output_path", type=click.Path(path_type=Path), default=None)
 @click.option(
-    "-c", "--config", "config_path",
-    type=click.Path(path_type=Path), default=None,
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(path_type=Path),
+    default=None,
 )
-def export(
-    last_window: str, output_path: Path | None, config_path: Path | None
-) -> None:
+def export(last_window: str, output_path: Path | None, config_path: Path | None) -> None:
     """Export measurements to CSV."""
     import csv
 
@@ -396,13 +418,29 @@ def export(
 
     with open(output_path, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["timestamp", "target", "rtt_avg_ms", "rtt_min_ms", "rtt_max_ms", "jitter_ms", "loss_pct"])
+        writer.writerow(
+            [
+                "timestamp",
+                "target",
+                "rtt_avg_ms",
+                "rtt_min_ms",
+                "rtt_max_ms",
+                "jitter_ms",
+                "loss_pct",
+            ]
+        )
         for row in rows:
-            writer.writerow([
-                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(row["ts"])),
-                row["target"], row["rtt_avg_ms"], row["rtt_min_ms"],
-                row["rtt_max_ms"], row["jitter_ms"], row["loss_pct"],
-            ])
+            writer.writerow(
+                [
+                    time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(row["ts"])),
+                    row["target"],
+                    row["rtt_avg_ms"],
+                    row["rtt_min_ms"],
+                    row["rtt_max_ms"],
+                    row["jitter_ms"],
+                    row["loss_pct"],
+                ]
+            )
 
     db.close()
     console.print(f"[green]Exported {len(rows)} rows to {output_path}[/green]")
@@ -411,6 +449,7 @@ def export(
 # ---------------------------------------------------------------------------
 # doctor
 # ---------------------------------------------------------------------------
+
 
 @main.command()
 def doctor() -> None:
@@ -512,9 +551,20 @@ def doctor() -> None:
     # HTTP connectivity
     try:
         result = subprocess.run(
-            ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "5",
-             "https://www.google.com/generate_204"],
-            capture_output=True, text=True, timeout=10,
+            [
+                "curl",
+                "-s",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                "--max-time",
+                "5",
+                "https://www.google.com/generate_204",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         code = result.stdout.strip()
         if code in ("204", "200"):
@@ -531,10 +581,14 @@ def doctor() -> None:
 # config
 # ---------------------------------------------------------------------------
 
+
 @main.command("config")
 @click.option(
-    "-c", "--config", "config_path",
-    type=click.Path(path_type=Path), default=None,
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(path_type=Path),
+    default=None,
 )
 def show_config(config_path: Path | None) -> None:
     """Print current configuration."""
@@ -558,11 +612,15 @@ def show_config(config_path: Path | None) -> None:
 # reset
 # ---------------------------------------------------------------------------
 
+
 @main.command()
 @click.option("-y", "--yes", is_flag=True, help="Skip confirmation.")
 @click.option(
-    "-c", "--config", "config_path",
-    type=click.Path(path_type=Path), default=None,
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(path_type=Path),
+    default=None,
 )
 def reset(yes: bool, config_path: Path | None) -> None:
     """Wipe the database and start fresh."""
